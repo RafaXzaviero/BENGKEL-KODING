@@ -31,27 +31,52 @@ with st.form("prediction_form"):
     submit = st.form_submit_button("Prediksi")
 
 if submit:
-    # Preprocess inputs (must match LabelEncoder values from training approximately or use a mapping)
-    # Simplified mapping for demonstration (ideally use stored LabelEncoders)
-    data = pd.DataFrame([inputs])
+    # 1. Buat DataFrame awal dari input
+    df_input = pd.DataFrame([inputs])
+
+    # 2. Manual Mapping (Harus SAMA dengan LabelEncoder di Notebook kamu)
+    # Sesuaikan angka di bawah ini dengan urutan alfabet/label di dataset asli
+    mapping_suicidal = {"No": 0, "Yes": 1}
+    mapping_diet = {"Healthy": 0, "Moderate": 1, "Unhealthy": 2}
     
-    # Basic encoding simulation (Manual or using stored encoders if available)
-    # In a real app, you should also load and use the LabelEncoders saved from training
-    for col in data.columns:
-        if data[col].dtype == 'object':
-            data[col] = data[col].astype('category').cat.codes
-            
-    # Note: For best results, ensure the input encoding matches the model's training data exactly.
+    df_input['Have you ever had suicidal thoughts ?'] = df_input['Have you ever had suicidal thoughts ?'].map(mapping_suicidal)
+    df_input['Dietary Habits'] = df_input['Dietary Habits'].map(mapping_diet)
+
+    # Untuk City dan Degree, karena opsinya banyak, kita gunakan cara aman:
+    # Mengubah string menjadi hash angka sederhana atau nilai default jika tidak ada encoder-nya
+    df_input['City'] = df_input['City'].apply(lambda x: len(x)) # Ini hanya placeholder
+    df_input['Degree'] = df_input['Degree'].apply(lambda x: len(x)) # Ini hanya placeholder
     
-    # Scale (Ensure all features from original training are present or handled)
-    # For this demo, we simulate the structure required by the scaler
-    placeholder = np.zeros((1, 16)) # Original feature count was 16
-    # ... Logic to map inputs back to specific indices would go here ...
+    # 3. Menyamakan Struktur dengan 16 Fitur Asli
+    # Kita buat dataframe kosong dengan 16 kolom (semua nol), lalu timpa dengan input user
+    full_features = [
+        'Gender', 'Age', 'City', 'Working Professional or Student', 'Academic Pressure', 
+        'Work Pressure', 'CGPA', 'Study Satisfaction', 'Job Satisfaction', 'Sleep Duration', 
+        'Dietary Habits', 'Degree', 'Have you ever had suicidal thoughts ?', 
+        'Work/Study Hours', 'Financial Stress', 'Family History of Mental Illness'
+    ]
     
-    # Simple output simulation since full encoder object loading is complex in a single script
-    prediction = model.predict(data[top_features])
+    df_final = pd.DataFrame(0, index=[0], columns=full_features)
     
+    # Update nilai yang ada dari input user
+    for col in inputs.keys():
+        if col in df_final.columns:
+            df_final[col] = df_input[col]
+
+    # 4. Scaling
+    # Scaler WAJIB menerima 16 fitur sesuai saat fit() dulu
+    data_scaled = scaler.transform(df_final)
+    
+    # Buat dataframe hasil scaling agar bisa difilter berdasarkan top_features
+    df_scaled = pd.DataFrame(data_scaled, columns=full_features)
+
+    # 5. Prediksi menggunakan top_features yang sudah di-scaling
+    prediction = model.predict(df_scaled[top_features])
+    
+    st.divider()
     if prediction[0] == 1:
-        st.error("Hasil Prediksi: Menunjukkan Gejala Depresi")
+        st.error("### Hasil Prediksi: Menunjukkan Gejala Depresi")
+        st.write("Tetap semangat! Jangan ragu untuk bercerita kepada orang terdekat atau profesional.")
     else:
-        st.success("Hasil Prediksi: Tidak Menunjukkan Gejala Depresi")
+        st.success("### Hasil Prediksi: Tidak Menunjukkan Gejala Depresi")
+        st.write("Kesehatan mentalmu terlihat baik. Pertahankan pola hidup sehat ya!")
