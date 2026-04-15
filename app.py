@@ -47,10 +47,9 @@ if submit:
     df_input['City'] = df_input['City'].apply(lambda x: len(x)) # Ini hanya placeholder
     df_input['Degree'] = df_input['Degree'].apply(lambda x: len(x)) # Ini hanya placeholder
     
-    # 3. Menyamakan Struktur dengan 16 Fitur Asli
-    # Kita buat dataframe kosong dengan 16 kolom (semua nol), lalu timpa dengan input user
+    # 3. Menyamakan Struktur dengan Nama Kolom yang TEPAT
     full_features = [
-        'Gender', 'Age', 'City', 'Working Professional or Student', 'Academic Pressure', 
+        'Gender', 'Age', 'City', 'Profession', 'Academic Pressure', 
         'Work Pressure', 'CGPA', 'Study Satisfaction', 'Job Satisfaction', 'Sleep Duration', 
         'Dietary Habits', 'Degree', 'Have you ever had suicidal thoughts ?', 
         'Work/Study Hours', 'Financial Stress', 'Family History of Mental Illness'
