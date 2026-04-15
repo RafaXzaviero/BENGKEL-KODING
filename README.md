@@ -4,9 +4,8 @@ A simple Streamlit application that predicts depression risk for students using 
 
 ## Demo Screenshot
 
-![Student Depression Prediction App](screenshots/app_input.png)
-
-> Add your app screenshot to `screenshots/app_input.png` and update the file path if needed.
+![App Input Screen](screenshots/app_input.png)
+![App Result Screen](screenshots/app_result.png)
 
 ## Overview
 
@@ -73,9 +72,3 @@ The form collects the following fields:
 - Make sure the feature encoding matches the training pipeline if you retrain the model.
 - Keep the `joblib` artifacts in the same directory as `app.py`.
 
-## Screenshot Images
-
-Place your screenshots in the `screenshots/` folder:
-
-- `screenshots/app_input.png` – main input form
-- `screenshots/app_result.png` – prediction result screen
